@@ -155,7 +155,41 @@ class utils:
             # Execute install command
             install_command = app_config["install_command"]
             logging.info(f"Executing: {install_command}")
-            subprocess.call(["./install.sh", app_config["name"]], cwd=self.metro_path)
+            subprocess.run(
+                ["./install.sh", app_config["name"]],
+                cwd=self.metro_path,
+                check=True,
+            )
+
+            if app_type == "SP":
+                required_secret_files = [
+                    os.path.join(
+                        self.metro_path,
+                        "smart-parking",
+                        "src",
+                        "secrets",
+                        "nodered",
+                        "nodered-admin-username",
+                    ),
+                    os.path.join(
+                        self.metro_path,
+                        "smart-parking",
+                        "src",
+                        "secrets",
+                        "nodered",
+                        "nodered-admin-password",
+                    ),
+                ]
+                missing_secret_files = [
+                    path for path in required_secret_files if not os.path.isfile(path)
+                ]
+                if missing_secret_files:
+                    logging.error(
+                        "Required Node-RED secret files were not generated: %s",
+                        ", ".join(missing_secret_files),
+                    )
+                    return False
+
             # Check 1: docker-compose.yml file exists
             if not os.path.exists("docker-compose.yml"):
                 logging.error("docker-compose.yml file not found")

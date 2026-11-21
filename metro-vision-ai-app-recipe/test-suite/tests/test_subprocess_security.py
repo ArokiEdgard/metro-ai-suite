@@ -13,7 +13,7 @@ ROOT = Path(__file__).parents[1]
 class SubprocessSecurityTests(TestCase):
     def test_python_suite_does_not_enable_shell_parsing(self):
         for path in ROOT.rglob("*.py"):
-            if any(part in {".venv", "node_modules", "artifacts", "logs"} for part in path.parts):
+            if any(part in {".venv", "venv", "node_modules", "artifacts", "logs"} for part in path.parts):
                 continue
             tree = ast.parse(path.read_text(), filename=str(path))
             for node in ast.walk(tree):
