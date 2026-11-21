@@ -155,9 +155,12 @@ class utils:
             # Execute install command
             install_command = app_config["install_command"]
             logging.info(f"Executing: {install_command}")
+            install_env = os.environ.copy()
+            install_env["YOLOV11S_DOWNLOAD_CONFIRMED"] = "1"
             subprocess.run(
                 ["./install.sh", app_config["name"]],
                 cwd=self.metro_path,
+                env=install_env,
                 check=True,
             )
 
